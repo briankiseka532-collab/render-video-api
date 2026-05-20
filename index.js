@@ -8,13 +8,12 @@ app.use(express.json());
 
 const client = new InferenceClient(process.env.HF_TOKEN);
 
-// --- ADD THIS ROOT ROUTE ---
-// This is a simple health check for Render to confirm the server is running.
+// Health check route (required by Render)
 app.get('/', (req, res) => {
   res.send('Video API is running!');
 });
-// --------------------------
 
+// Video generation endpoint
 app.post('/api/generate-video', async (req, res) => {
   const { prompt } = req.body;
   if (!prompt) {

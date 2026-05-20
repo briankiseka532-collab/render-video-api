@@ -1,38 +1,23 @@
 import express from 'express';
-import { InferenceClient } from '@huggingface/inference';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-const client = new InferenceClient(process.env.HF_TOKEN);
-
-// Health check route (required by Render)
+// Root route (health check)
 app.get('/', (req, res) => {
-  res.send('Video API is running!');
+  res.json({ message: 'API is running!' });
 });
 
-// Video generation endpoint
-app.post('/api/generate-video', async (req, res) => {
+// Test POST route
+app.post('/api/generate-video', (req, res) => {
   const { prompt } = req.body;
-  if (!prompt) {
-    return res.status(400).json({ error: 'Prompt is required' });
-  }
-
-  try {
-    const blob = await client.textToVideo({
-      model: 'damo-vilab/text-to-video-ms-1.7b',
-      inputs: prompt,
-    });
-    const buffer = Buffer.from(await blob.arrayBuffer());
-    const base64 = buffer.toString('base64');
-    const videoUrl = `data:video/mp4;base64,${base64}`;
-    res.status(200).json({ videoUrl });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Failed to generate video' });
-  }
+  res.json({ 
+    message: 'Received your prompt', 
+    prompt: prompt,
+    videoUrl: 'https://example.com/dummy-video.mp4' 
+  });
 });
 
 app.listen(PORT, () => {

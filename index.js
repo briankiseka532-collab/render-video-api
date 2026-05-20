@@ -3,14 +3,11 @@ import express from 'express';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Enable CORS for all origins
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
+  if (req.method === 'OPTIONS') return res.sendStatus(200);
   next();
 });
 
@@ -20,17 +17,22 @@ app.get('/', (req, res) => {
   res.json({ message: 'API is running!' });
 });
 
-// Add the POST endpoint that your frontend calls
 app.post('/api/generate-video', async (req, res) => {
   const { prompt } = req.body;
   if (!prompt) {
     return res.status(400).json({ error: 'Prompt is required' });
   }
 
-  // For now, return a dummy video (a tiny black video in base64)
-  // This tests the connection. Later replace with real AI.
-  const dummyVideoBase64 = 'AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEA...'; // truncated, but will work as placeholder
-  return res.json({ videoUrl: `data:video/mp4;base64,${dummyVideoBase64}` });
+  // Return a public, short sample video (from the internet)
+  // This video is just for testing – it will always be the same.
+  const sampleVideoUrl = 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4';
+  
+  // Fetch the video and convert to base64 so your frontend can download it
+  const videoResponse = await fetch(sampleVideoUrl);
+  const buffer = Buffer.from(await videoResponse.arrayBuffer());
+  const base64 = buffer.toString('base64');
+  
+  res.json({ videoUrl: `data:video/mp4;base64,${base64}` });
 });
 
 app.listen(PORT, () => {

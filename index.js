@@ -1,4 +1,5 @@
 import express from 'express';
+import fetch from 'node-fetch';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -6,7 +7,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.json({ message: 'API is running!' });
+  res.send('Video API is running!');
 });
 
 app.post('/api/generate-video', async (req, res) => {
@@ -15,7 +16,6 @@ app.post('/api/generate-video', async (req, res) => {
     return res.status(400).json({ error: 'Prompt is required' });
   }
 
-  // Public sample video (small, works)
   const sampleVideoUrl = 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4';
   
   try {
